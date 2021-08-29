@@ -1,0 +1,1 @@
+print('Mario is gay')
