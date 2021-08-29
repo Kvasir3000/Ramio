@@ -1,8 +1,7 @@
-import abc
+from abc import ABC, abstractmethod
 
 
-class GameObject:
-
+class GameObject(ABC):
     def __init__(self, x, y, sprite):
         self.x = x
         self.y = y
@@ -10,16 +9,22 @@ class GameObject:
         self.height = sprite.get_height()
         self.width = sprite.get_width()
 
-    @abc.abstractmethod
+    @abstractmethod
     def update(self):
         pass
 
-    @abc.abstractmethod
+    @abstractmethod
     def generate_output(self):
         pass
 
     @staticmethod
-    def collision(obj_1, obj_2):
-        if obj_1.x < obj_2.x + obj_2.width and obj_1.x + obj_1.width > obj_2.x \
-                 and obj_1.y < obj_2.y + obj_2.y and obj_1.y + obj_1.height > obj_2.y:
-                    return True
+    def __x_collision(obj1, obj2):
+        return obj1.x < obj2.x + obj2.width and obj1.x + obj1.width > obj2.x
+
+    @staticmethod
+    def __y_collision(obj1, obj2):
+        return obj1.y < obj2.y + obj2.y and obj1.y + obj1.height > obj2.y
+
+    @staticmethod
+    def collision(obj1, obj2):
+        return GameObject.__x_collision(obj1, obj2) and GameObject.__y_collision(obj1, obj2)
