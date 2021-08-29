@@ -13,8 +13,7 @@ def handle_event(user_event):   # TODO: try to use match-case statement
 pg.init()
 
 while pg.get_init():
-    for event in pg.event.get():
-        handle_event(event)
-
     MAIN_WINDOW.blit(BACKGROUND, (0, 0))
     pygame.display.update()
+    for event in pg.event.get():
+        handle_event(event)
