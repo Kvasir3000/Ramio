@@ -2,7 +2,7 @@ import pygame
 
 pygame.init()
 
-window = pygame.display.set_mode((1920, 1000))
+window = pygame.display.set_mode((1920, 1080))
 gameLoop = True
 while gameLoop:
     for event in pygame.event.get():
