@@ -2,12 +2,12 @@ from abc import ABC, abstractmethod
 
 
 class GameObject(ABC):
-    def __init__(self, x, y, sprite):
+    def __init__(self, x, y, *sprites):  # TODO: check is sprites are empty
         self.x = x
         self.y = y
-        self.sprite = sprite
-        self.height = sprite.get_height()
-        self.width = sprite.get_width()
+        self.sprites = list(sprites)
+        self.height = sprites[0].get_height()
+        self.width = sprites[0].get_width()
 
     @abstractmethod
     def update(self):
