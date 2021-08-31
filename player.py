@@ -44,3 +44,6 @@ class Player(GameObject):
         else:
             current_sprite = 0
             self.image = self.sprites[current_sprite]
+
+    def __call__(self, *args, **kwargs):
+        pass
