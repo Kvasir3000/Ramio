@@ -4,12 +4,9 @@ from pygame.sprite import Sprite
 
 
 class GameObject(Sprite, ABC):
-    def __init__(self, x, y, velocity, *images):
+    def __init__(self, position, *images):
         super().__init__()
-
-        self.images = [load(image) for image in images]
         self.image_idx = 0
+        self.images = [load(image) for image in images]
         self.image = self.images[self.image_idx]
-
-        self.velocity = velocity
-        self.rect = self.image.get_rect(bottomleft=(x, y))
+        self.rect = self.image.get_rect(bottomleft=position)
