@@ -1,4 +1,6 @@
 class Velocity:
-    def __init__(self, components, direction):
+    def __init__(self, components):
         self.components = components
-        self.direction = direction
+
+    def __getitem__(self, item):
+        return self.components[item]

@@ -86,7 +86,7 @@ class Game:
 
     def __load(self):
         self.__background = image.load('Background.png')
-        player = Player(700, 750)
+        player = Player((700, 750))
         self.__player.add(player)
 
     def __draw(self):
@@ -109,13 +109,13 @@ class Game:
 
     def __handle_player_movement(self):
         keys = pg.key.get_pressed()
-        velocity = self.__player.sprite.velocity
+        velocity = self.__player.sprite.velocity[0]
         if keys[pg.K_a] and not self.__collision_detection(-velocity):
-            self.__move_flag = -1
+            self.__player.sprite.direction = -1
         elif keys[pg.K_d] and not self.__collision_detection(velocity):
-            self.__move_flag = 1
+            self.__player.sprite.direction = 1
         else:
-            self.__move_flag = 0
+            self.__player.sprite.direction = 0
 
     def __process_input(self):
         for event in pg.event.get():
