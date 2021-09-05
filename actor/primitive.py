@@ -1,84 +1,68 @@
 from pygame.image import load
 from pygame.sprite import Sprite
-from physics.constants import Constants
+from physics import constants
+from pygame.math import Vector2
 from abc import ABC, abstractmethod
 
 
 class Actor(Sprite, ABC):
-    def __init__(self, position, image):
+    def __init__(self, x, y, image):
         super().__init__()
         self.image = load(image)
-        self.rect = self.image.get_rect(bottomleft=position)
+        self.rect = self.image.get_rect(bottomleft=(x, y))
 
     @property
     def x(self):
         return self.rect.x
 
-    @x.setter
-    def x(self, val):
-        self.rect.x = val
-
     @property
     def y(self):
         return self.rect.y
 
-    @y.setter
-    def y(self, val):
-        self.rect.y = val
+    @property
+    def next_rect(self):
+        return self.rect
 
     def move_image(self, offset):
         self.rect.move_ip(offset)
 
 
 class MovingActor(Actor, ABC):
-    def __init__(self, position, velocity, image):
-        Actor.__init__(self, position, image)
+    def __init__(self, x, y, velocity, image):
+        Actor.__init__(self, x, y, image)
         self.velocity = velocity
 
     @property
     @abstractmethod
-    def base_velocity(self):
+    def base_velocity(self) -> Vector2:
         pass
 
     @property
     @abstractmethod
-    def jump_height(self):
+    def jump_height(self) -> int:
         pass
+
+    @property
+    def next_rect(self):
+        return self.rect.move(self.velocity)
 
     def move(self, offset):
         super().move_image(offset)
 
-    # TODO: sdelay
     def jump(self):
-        self.y_velocity += Constants.ACCELERATION / 60
-
-    @property
-    def x_velocity(self):
-        return self.velocity[0]
-
-    @x_velocity.setter
-    def x_velocity(self, val):
-        self.velocity[0] = val
-
-    @property
-    def y_velocity(self, ):
-        return self.velocity[1]
-
-    @y_velocity.setter
-    def y_velocity(self, val):
-        self.velocity[1] = val
+        self.velocity.y += constants.GRAVITATIONAL_ACCELERATION / 60
 
 
 class AnimatedActor(Actor, ABC):
-    def __init__(self, position, *images):
-        super().__init__(position, images[0])
+    def __init__(self, x, y, *images):
+        super().__init__(x, y, images[0])
         self.image_idx = 0
         self.images = [load(image) for image in images]
         self.image = self.images[self.image_idx]
 
     @property
     @abstractmethod
-    def animation_speed(self):
+    def animation_speed(self) -> int:
         pass
 
     def animate(self, step):
@@ -87,8 +71,8 @@ class AnimatedActor(Actor, ABC):
 
 
 class ManipulatedActor(Actor, ABC):
-    def __init__(self, position, image):
-        super().__init__(position, image)
+    def __init__(self, x, y, image):
+        super().__init__(x, y, image)
 
     @abstractmethod
     def handle(self, keys):

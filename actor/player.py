@@ -1,17 +1,18 @@
 import pygame
 from actor.fusion import Marionette
 from physics.collision import Collision
-from physics.constants import Constants
+from pygame.math import Vector2
+from physics import constants
 
 
 class Player(Marionette):
-    def __init__(self, position):
-        super().__init__(position, self.base_velocity, 'Character01.png')
+    def __init__(self, x, y):
+        super().__init__(x, y, self.base_velocity, 'Character01.png')
         self.is_jumping = False
 
     @property
     def base_velocity(self):
-        return [0, 0]
+        return Vector2(0, 0)
 
     @property
     def jump_height(self):
@@ -21,39 +22,47 @@ class Player(Marionette):
     def animation_speed(self):
         return 1
 
-    def update_x_coordinates(self, actors):
-        if self.x_velocity < 0 and Collision.detect('left', self, actors):
-            self.x_velocity = 0
-        elif self.x_velocity > 0 and Collision.detect('right', self, actors):
-            self.x_velocity = 0
-
-    def update_y_coordinates(self, actors):
-        if self.is_falling(actors):
-            self.jump()
-            if Collision.detect('top', self, actors):
-                self.y_velocity = -self.y_velocity
-        elif self.y_velocity >= 0:
-            self.y_velocity = 0
-            self.is_jumping = False
-        elif self.y_velocity < 0:
-            self.jump()
-
-    def update(self, *actors):
-        self.update_x_coordinates(actors)
-        self.update_y_coordinates(actors)
+    def update(self, actors):
+        self.update_position(actors)
         self.move(self.velocity)
 
-    def handle(self, keys):
-        if keys[pygame.K_a]:
-            self.x_velocity = -2.
-        elif keys[pygame.K_d]:
-            self.x_velocity = 2
-        else:
-            self.x_velocity = 0
+    def update_position(self, actors):
+        self.update_x(actors)
+        self.update_y(actors)
 
+    def update_x(self, actors):
+        if self.velocity.x < 0 and Collision.detect(self, actors, direction='left'):
+            self.velocity.x = 0
+        elif self.velocity.x > 0 and Collision.detect(self, actors, direction='right'):
+            self.velocity.x = 0
+
+    def update_y(self, actors):
+        if self.is_falling(actors):
+            self.jump()
+            if Collision.detect(self, actors, direction='top'):
+                self.velocity.y *= -1
+        elif self.velocity.y >= 0:
+            self.velocity.y = 0
+            self.is_jumping = False
+        elif self.velocity.y < 0:
+            self.jump()
+
+    def handle(self, keys):
+        self.handle_movement(keys)
+        self.handle_jump(keys)
+
+    def handle_movement(self, keys):
+        if keys[pygame.K_a]:
+            self.velocity.x = -2
+        elif keys[pygame.K_d]:
+            self.velocity.x = 2
+        else:
+            self.velocity.x = 0
+
+    def handle_jump(self, keys):
         if keys[pygame.K_SPACE] and not self.is_jumping:
             self.is_jumping = True
-            self.y_velocity = -10
+            self.velocity.y = -10
 
     def is_falling(self, objects):
-        return self.y < Constants.GROUND and not Collision.detect('bottom', self, objects)
+        return self.y < 600 and not Collision.detect(self, objects, direction='bottom')
