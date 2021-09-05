@@ -31,15 +31,15 @@ class Player(Marionette):
         self.update_y(actors)
 
     def update_x(self, actors):
-        if self.velocity.x < 0 and Collision.detect(self, actors, direction='left'):
+        if self.velocity.x < 0 and Collision.detect(self, actors, dir='left'):
             self.velocity.x = 0
-        elif self.velocity.x > 0 and Collision.detect(self, actors, direction='right'):
+        elif self.velocity.x > 0 and Collision.detect(self, actors, dir='right'):
             self.velocity.x = 0
 
     def update_y(self, actors):
         if self.is_falling(actors):
             self.jump()
-            if Collision.detect(self, actors, direction='top'):
+            if Collision.detect(self, actors, dir='top'):
                 self.velocity.y *= -1
         elif self.velocity.y >= 0:
             self.velocity.y = 0
@@ -63,6 +63,3 @@ class Player(Marionette):
         if keys[pygame.K_SPACE] and not self.is_jumping:
             self.is_jumping = True
             self.velocity.y = -10
-
-    def is_falling(self, objects):
-        return self.y < 600 and not Collision.detect(self, objects, direction='bottom')

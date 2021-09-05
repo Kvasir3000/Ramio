@@ -11,7 +11,7 @@ class Game:
         self.fps = fps
         self.clock = time.Clock()
         self.player = GroupSingle(Player(400, 100))
-        self.objects = Group(Brick(1000, 750), Brick(100, 750), Brick(800, 500))
+        self.actors = Group(Brick(1000, 750), Brick(100, 750), Brick(800, 500))
         self.background = image.load('Background.png')
         self.window = display.set_mode((width, height))
 
@@ -41,12 +41,12 @@ class Game:
     def display(self):
         self.window.blit(self.background, (0, 0))
         self.player.draw(self.window)
-        self.objects.draw(self.window)
+        self.actors.draw(self.window)
 
     def update(self):
         self.clock.tick(self.fps)
         display.update()
-        self.player.update(self.objects.sprites())
+        self.player.update(self.actors.sprites())
 
     def close(self):
         self.is_running = False

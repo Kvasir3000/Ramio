@@ -3,6 +3,7 @@ from pygame.sprite import Sprite
 from physics import constants
 from pygame.math import Vector2
 from abc import ABC, abstractmethod
+from physics.collision import Collision
 
 
 class Actor(Sprite, ABC):
@@ -25,6 +26,10 @@ class Actor(Sprite, ABC):
 
     def move_image(self, offset):
         self.rect.move_ip(offset)
+
+    # TODO: remove first condition when ground is added
+    def is_falling(self, objects):
+        return self.y < 600 and not Collision.detect(self, objects, dir='bottom')
 
 
 class MovingActor(Actor, ABC):
