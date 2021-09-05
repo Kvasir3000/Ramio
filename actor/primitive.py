@@ -1,5 +1,6 @@
 from pygame.image import load
 from pygame.sprite import Sprite
+from physics.constants import Constants
 from abc import ABC, abstractmethod
 
 
@@ -13,9 +14,17 @@ class Actor(Sprite, ABC):
     def x(self):
         return self.rect.x
 
+    @x.setter
+    def x(self, val):
+        self.rect.x = val
+
     @property
     def y(self):
         return self.rect.y
+
+    @y.setter
+    def y(self, val):
+        self.rect.y = val
 
     def move_image(self, offset):
         self.rect.move_ip(offset)
@@ -41,7 +50,23 @@ class MovingActor(Actor, ABC):
 
     # TODO: sdelay
     def jump(self):
-        pass
+        self.y_velocity += Constants.ACCELERATION / 60
+
+    @property
+    def x_velocity(self):
+        return self.velocity[0]
+
+    @x_velocity.setter
+    def x_velocity(self, val):
+        self.velocity[0] = val
+
+    @property
+    def y_velocity(self, ):
+        return self.velocity[1]
+
+    @y_velocity.setter
+    def y_velocity(self, val):
+        self.velocity[1] = val
 
 
 class AnimatedActor(Actor, ABC):

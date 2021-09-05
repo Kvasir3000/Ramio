@@ -9,5 +9,5 @@ class Puppet(MovingActor, AnimatedActor, ABC):
 
 
 class Marionette(Puppet, ManipulatedActor, ABC):
-    def __init__(self, position, velocity,* images):
+    def __init__(self, position, velocity, *images):
         Puppet.__init__(self, position, velocity, *images)

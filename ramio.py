@@ -1,5 +1,6 @@
 import pygame
 from actor.player import Player
+from actor.block import Brick
 from pygame import image, display, time
 from pygame.sprite import Group
 
@@ -9,9 +10,12 @@ class Game:
         self.is_running = True
         self.fps = fps
         self.clock = time.Clock()
-        self.actors = Group(Player((700, 750)))
+        self.actors = Group(Player((400, 100)))
+        self.objects = Group(Brick((1000, 750)))
+        self.objects.add(Brick((100, 750)))
+        self.objects.add(Brick((800, 500)))
         self.background = image.load('Background.png')
-        self.window = display.set_mode((width, height))
+        self.window = display.set_mode((width, height), pygame.FULLSCREEN)
 
     @property
     def player(self):
@@ -43,11 +47,12 @@ class Game:
     def display(self):
         self.window.blit(self.background, (0, 0))
         self.actors.draw(self.window)
+        self.objects.draw(self.window)
 
     def update(self):
-        self.actors.update()
-        display.update()
         self.clock.tick(self.fps)
+        display.update()
+        self.actors.update(*self.objects.sprites())
 
     def close(self):
         self.is_running = False
