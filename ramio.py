@@ -1,7 +1,6 @@
-import pygame
+import pygame as pg
 from actor.player import Player
 from actor.block import Brick
-from pygame import display, time
 from pygame.sprite import Group, GroupSingle
 
 
@@ -9,18 +8,18 @@ class Game:
     def __init__(self, width=1920, height=1080, fps=60):
         self.is_running = True
         self.fps = fps
-        self.clock = time.Clock()
+        self.clock = pg.time.Clock()
         self.player = GroupSingle(Player(400, 900))
         self.actors = Group(Brick(300, 500))
-        self.window = display.set_mode((width, height))
+        self.window = pg.display.set_mode((width, height))
 
     @property
     def events(self):
-        return pygame.event.get()
+        return pg.event.get()
 
     @property
     def pressed_keys(self):
-        return pygame.key.get_pressed()
+        return pg.key.get_pressed()
 
     def start(self):
         while self.is_running:
@@ -35,7 +34,7 @@ class Game:
             self.player.sprite.handle(self.pressed_keys)
 
     def received_quit_event(self):
-        return any([event.type == pygame.QUIT for event in self.events])
+        return any([event.type == pg.QUIT for event in self.events])
 
     def display(self):
         self.window.fill((0, 0, 0))
@@ -44,7 +43,7 @@ class Game:
 
     def update(self):
         self.clock.tick(self.fps)
-        display.update()
+        pg.display.update()
         self.player.update(self.actors.sprites())
 
     def close(self):
@@ -52,7 +51,7 @@ class Game:
 
 
 if __name__ == "__main__":
-    pygame.init()
+    pg.init()
     Game().start()
-    pygame.quit()
+    pg.quit()
 
