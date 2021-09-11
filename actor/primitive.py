@@ -1,39 +1,30 @@
-from pygame.image import load
-from pygame.sprite import Sprite
-from physics import constants
+import pygame as pg
 from pygame.math import Vector2
+from pygame.sprite import Sprite
 from abc import ABC, abstractmethod
-from physics.collision import Collision
 
 
 class Actor(Sprite, ABC):
     def __init__(self, x, y, image):
         super().__init__()
-        self.original_image = load(image)
+        self.original_image = pg.image.load(image)
         self.image = self.original_image
-        self.rect = self.image.get_rect(bottomleft=(x, y))
+        self.rect = self.image.get_rect(center=(x, y))
 
     @property
-    def x(self):
-        return self.rect.x
-
-    @property
-    def y(self):
-        return self.rect.y
+    def position(self):
+        return self.rect.x, self.rect.y
 
     @property
     def next_rect(self):
         return self.rect
 
-    def move_image(self, offset):
+    def move(self, offset):
         self.rect.move_ip(offset)
 
-    # TODO: remove first condition when ground is added
-    def is_falling(self, objects):
-        return self.y < 600 and not Collision.detect(self, objects, dir='bottom')
-
-    def normalize(self, y):
-        return y * -1
+    def rotate(self, angle):
+        self.image = pg.transform.rotate(self.original_image, angle)
+        self.rect = self.image.get_rect(center=self.rect.center)
 
 
 class MovingActor(Actor, ABC):
@@ -42,39 +33,21 @@ class MovingActor(Actor, ABC):
         self.velocity = velocity
 
     @property
-    @abstractmethod
-    def base_velocity(self) -> Vector2:
-        pass
-
-    @property
-    @abstractmethod
-    def jump_height(self) -> int:
-        pass
-
-    @property
     def next_rect(self):
         return self.rect.move(self.velocity)
 
     def move(self, offset):
-        super().move_image(offset)
-
-    def jump(self):
-        self.velocity.y += constants.GRAVITATIONAL_ACCELERATION / 60
+        super().move(offset)
 
 
 class AnimatedActor(Actor, ABC):
     def __init__(self, x, y, *images):
         super().__init__(x, y, images[0])
         self.image_idx = 0
-        self.images = [load(image) for image in images]
+        self.images = [pg.image.load(image) for image in images]
         self.image = self.images[self.image_idx]
 
-    @property
-    @abstractmethod
-    def animation_speed(self) -> int:
-        pass
-
-    def animate(self, step):
+    def animate(self, step=1):
         self.image_idx = (self.image_idx + step) % len(self.images)
         self.image = self.images[int(self.image_idx)]
 

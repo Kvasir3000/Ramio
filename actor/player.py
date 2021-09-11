@@ -1,27 +1,14 @@
-import pygame
+import math
+import numpy as np
+import pygame as pg
+from pygame.math import Vector2
 from actor.fusion import Marionette
 from physics.collision import Collision
-from pygame.math import Vector2
-import pygame.mouse as mouse
-import math
 
 
 class Player(Marionette):
     def __init__(self, x, y):
-        super().__init__(x, y, self.base_velocity, 'player.png')
-        self.is_jumping = False
-
-    @property
-    def base_velocity(self):
-        return Vector2(0, 0)
-
-    @property
-    def jump_height(self):
-        return 0
-
-    @property
-    def animation_speed(self):
-        return 1
+        super().__init__(x, y, Vector2(0, 0), 'player.png')
 
     def update(self, actors):
         self.update_position(actors)
@@ -48,34 +35,21 @@ class Player(Marionette):
         self.mouse_input()
 
     def keyboard_input(self, keys):
-        if keys[pygame.K_w]:
+        if keys[pg.K_w]:
             self.velocity.y = -7
-        elif keys[pygame.K_s]:
+        elif keys[pg.K_s]:
             self.velocity.y = 7
         else:
             self.velocity.y = 0
 
-        if keys[pygame.K_a]:
+        if keys[pg.K_a]:
             self.velocity.x = -7
-        elif keys[pygame.K_d]:
+        elif keys[pg.K_d]:
             self.velocity.x = 7
         else:
             self.velocity.x = 0
 
     def mouse_input(self):
-        mouse_x, mouse_y = mouse.get_pos()
-        if mouse_x <= 0:
-            mouse_x = 1
-        if mouse_y <= 0:
-            mouse_y = 1
-        x_distance = mouse_x - self.rect.topleft[0]
-        y_distance = mouse_y - self.rect.topleft[1]
-        if x_distance == 0:
-            x_distance = 1
-        elif y_distance == 0:
-            y_distance = 1
-
-        angle = (180 / math.pi) * -math.atan2(y_distance, x_distance)
-        self.image = pygame.transform.rotate(self.original_image, angle)
-        orig_center = self.rect.center
-        self.rect = self.image.get_rect(center=orig_center)
+        distance = np.subtract(pg.mouse.get_pos(), self.position)
+        angle = math.degrees(math.atan2(*distance))
+        self.rotate(angle)

@@ -1,18 +1,18 @@
 import pygame
 from actor.player import Player
 from actor.block import Brick
-from pygame import image, display, time
+from pygame import display, time
 from pygame.sprite import Group, GroupSingle
 
 
 class Game:
-    def __init__(self, width=1920, height=500, fps=60):
+    def __init__(self, width=1920, height=1080, fps=60):
         self.is_running = True
         self.fps = fps
         self.clock = time.Clock()
         self.player = GroupSingle(Player(400, 900))
         self.actors = Group(Brick(300, 500))
-        self.window = display.set_mode((width, height), pygame.FULLSCREEN)
+        self.window = display.set_mode((width, height))
 
     @property
     def events(self):
