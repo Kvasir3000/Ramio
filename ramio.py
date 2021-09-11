@@ -6,14 +6,13 @@ from pygame.sprite import Group, GroupSingle
 
 
 class Game:
-    def __init__(self, width=1920, height=1080, fps=60):
+    def __init__(self, width=1920, height=500, fps=60):
         self.is_running = True
         self.fps = fps
         self.clock = time.Clock()
-        self.player = GroupSingle(Player(400, 100))
-        self.actors = Group(Brick(1000, 750), Brick(100, 750), Brick(800, 500))
-        self.background = image.load('Background.png')
-        self.window = display.set_mode((width, height))
+        self.player = GroupSingle(Player(400, 900))
+        self.actors = Group(Brick(300, 500))
+        self.window = display.set_mode((width, height), pygame.FULLSCREEN)
 
     @property
     def events(self):
@@ -39,7 +38,7 @@ class Game:
         return any([event.type == pygame.QUIT for event in self.events])
 
     def display(self):
-        self.window.blit(self.background, (0, 0))
+        self.window.fill((0, 0, 0))
         self.player.draw(self.window)
         self.actors.draw(self.window)
 

@@ -2,12 +2,13 @@ import pygame
 from actor.fusion import Marionette
 from physics.collision import Collision
 from pygame.math import Vector2
-from physics import constants
+import pygame.mouse as mouse
+import math
 
 
 class Player(Marionette):
     def __init__(self, x, y):
-        super().__init__(x, y, self.base_velocity, 'Character01.png')
+        super().__init__(x, y, self.base_velocity, 'player.png')
         self.is_jumping = False
 
     @property
@@ -31,35 +32,50 @@ class Player(Marionette):
         self.update_y(actors)
 
     def update_x(self, actors):
-        if self.velocity.x < 0 and Collision.detect(self, actors, dir='left'):
+        if self.velocity.x > 0 and Collision.detect(self, actors, 'right'):
             self.velocity.x = 0
-        elif self.velocity.x > 0 and Collision.detect(self, actors, dir='right'):
+        elif self.velocity.x < 0 and Collision.detect(self, actors, 'left'):
             self.velocity.x = 0
 
     def update_y(self, actors):
-        if self.is_falling(actors):
-            self.jump()
-            if Collision.detect(self, actors, dir='top'):
-                self.velocity.y *= -1
-        elif self.velocity.y >= 0:
+        if self.velocity.y > 0 and Collision.detect(self, actors, 'bottom'):
             self.velocity.y = 0
-            self.is_jumping = False
-        elif self.velocity.y < 0:
-            self.jump()
+        elif self.velocity.y < 0 and Collision.detect(self, actors, 'top'):
+            self.velocity.y = 0
 
     def handle(self, keys):
-        self.handle_movement(keys)
-        self.handle_jump(keys)
+        self.keyboard_input(keys)
+        self.mouse_input()
 
-    def handle_movement(self, keys):
+    def keyboard_input(self, keys):
+        if keys[pygame.K_w]:
+            self.velocity.y = -7
+        elif keys[pygame.K_s]:
+            self.velocity.y = 7
+        else:
+            self.velocity.y = 0
+
         if keys[pygame.K_a]:
-            self.velocity.x = -2
+            self.velocity.x = -7
         elif keys[pygame.K_d]:
-            self.velocity.x = 2
+            self.velocity.x = 7
         else:
             self.velocity.x = 0
 
-    def handle_jump(self, keys):
-        if keys[pygame.K_SPACE] and not self.is_jumping:
-            self.is_jumping = True
-            self.velocity.y = -10
+    def mouse_input(self):
+        mouse_x, mouse_y = mouse.get_pos()
+        if mouse_x <= 0:
+            mouse_x = 1
+        if mouse_y <= 0:
+            mouse_y = 1
+        x_distance = mouse_x - self.rect.topleft[0]
+        y_distance = mouse_y - self.rect.topleft[1]
+        if x_distance == 0:
+            x_distance = 1
+        elif y_distance == 0:
+            y_distance = 1
+
+        angle = (180 / math.pi) * -math.atan2(y_distance, x_distance)
+        self.image = pygame.transform.rotate(self.original_image, angle)
+        orig_center = self.rect.center
+        self.rect = self.image.get_rect(center=orig_center)

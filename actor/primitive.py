@@ -9,7 +9,8 @@ from physics.collision import Collision
 class Actor(Sprite, ABC):
     def __init__(self, x, y, image):
         super().__init__()
-        self.image = load(image)
+        self.original_image = load(image)
+        self.image = self.original_image
         self.rect = self.image.get_rect(bottomleft=(x, y))
 
     @property
@@ -30,6 +31,9 @@ class Actor(Sprite, ABC):
     # TODO: remove first condition when ground is added
     def is_falling(self, objects):
         return self.y < 600 and not Collision.detect(self, objects, dir='bottom')
+
+    def normalize(self, y):
+        return y * -1
 
 
 class MovingActor(Actor, ABC):
@@ -82,4 +86,3 @@ class ManipulatedActor(Actor, ABC):
     @abstractmethod
     def handle(self, keys):
         pass
-
