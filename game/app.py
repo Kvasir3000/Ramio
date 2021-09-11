@@ -1,16 +1,17 @@
 import pygame as pg
-from actor.player import Player
-from actor.block import Brick
+from game.actors.ramio import Ramio
+from game.actors.block import Brick
 from pygame.sprite import Group, GroupSingle
 
 
 class Game:
     def __init__(self, width=1920, height=1080, fps=60):
+        pg.init()
         self.is_running = True
         self.fps = fps
         self.clock = pg.time.Clock()
-        self.player = GroupSingle(Player(400, 900))
         self.actors = Group(Brick(300, 500))
+        self.player = GroupSingle(Ramio(400, 900))
         self.window = pg.display.set_mode((width, height))
 
     @property
@@ -31,7 +32,7 @@ class Game:
         if self.received_quit_event():
             self.close()
         else:
-            self.player.sprite.handle(self.pressed_keys)
+            self.player.sprite.respond(self.pressed_keys)
 
     def received_quit_event(self):
         return any([event.type == pg.QUIT for event in self.events])
@@ -47,11 +48,5 @@ class Game:
         self.player.update(self.actors.sprites())
 
     def close(self):
+        pg.quit()
         self.is_running = False
-
-
-if __name__ == "__main__":
-    pg.init()
-    Game().start()
-    pg.quit()
-

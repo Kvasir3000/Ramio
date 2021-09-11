@@ -1,4 +1,4 @@
-from actor.primitive import Actor
+from game.actors.primitive import Actor
 
 
 class Brick(Actor):

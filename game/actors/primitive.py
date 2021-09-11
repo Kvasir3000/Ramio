@@ -1,5 +1,5 @@
 import pygame as pg
-from pygame.math import Vector2
+from pygame import Vector2
 from pygame.sprite import Sprite
 from abc import ABC, abstractmethod
 
@@ -19,12 +19,12 @@ class Actor(Sprite, ABC):
     def next_rect(self):
         return self.rect
 
-    def move(self, offset):
-        self.rect.move_ip(offset)
-
     def rotate(self, angle):
         self.image = pg.transform.rotate(self.original_image, angle)
         self.rect = self.image.get_rect(center=self.rect.center)
+
+    def move_image(self, offset):
+        self.rect.move_ip(offset)
 
 
 class MovingActor(Actor, ABC):
@@ -36,8 +36,8 @@ class MovingActor(Actor, ABC):
     def next_rect(self):
         return self.rect.move(self.velocity)
 
-    def move(self, offset):
-        super().move(offset)
+    def move(self):
+        super().move_image(self.velocity)
 
 
 class AnimatedActor(Actor, ABC):
@@ -57,5 +57,5 @@ class ManipulatedActor(Actor, ABC):
         super().__init__(x, y, image)
 
     @abstractmethod
-    def handle(self, keys):
+    def respond(self, keys):
         pass

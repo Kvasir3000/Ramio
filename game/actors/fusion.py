@@ -1,4 +1,4 @@
-from actor.primitive import MovingActor, AnimatedActor, ManipulatedActor
+from game.actors.primitive import MovingActor, AnimatedActor, ManipulatedActor
 from abc import ABC
 
 
