@@ -1,3 +1,4 @@
+import pygame
 import pygame as pg
 from game.actors.ramio import Ramio
 from game.actors.block import Brick
@@ -11,8 +12,9 @@ class Game:
         self.fps = fps
         self.clock = pg.time.Clock()
         self.actors = Group(Brick(300, 500))
-        self.player = GroupSingle(Ramio(400, 900))
-        self.window = pg.display.set_mode((width, height))
+        self.player = GroupSingle(Ramio(400, 100))
+        self.window = pg.display.set_mode((width, height), pygame.FULLSCREEN)
+        pygame.mouse.set_visible(True)
 
     @property
     def events(self):
@@ -23,13 +25,15 @@ class Game:
         return pg.key.get_pressed()
 
     def start(self):
+
+        pygame.mouse.set_pos(1000, 1000)
         while self.is_running:
             self.display()
             self.update()
             self.process_input()
 
     def process_input(self):
-        if self.received_quit_event():
+        if self.received_quit_event() or self.pressed_keys[pygame.K_ESCAPE]:
             self.close()
         else:
             self.player.sprite.respond(self.pressed_keys)

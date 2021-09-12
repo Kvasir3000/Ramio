@@ -3,7 +3,6 @@ import numpy as np
 import pygame as pg
 from pygame.math import Vector2
 from game.actors.fusion import Marionette
-from game.physics.collision import Collision
 
 
 class Ramio(Marionette):
@@ -11,6 +10,7 @@ class Ramio(Marionette):
 
     def __init__(self, x, y):
         super().__init__(x, y, Vector2(0, 0), 'player.png')
+        self.last_cursor_position = (0, 0)
 
     def update(self, actors):
         self.update_position(actors)
@@ -19,18 +19,6 @@ class Ramio(Marionette):
     def update_position(self, actors):
         self.update_x(actors)
         self.update_y(actors)
-
-    def update_x(self, actors):
-        if self.velocity.x > 0 and Collision.detect(self, actors, 'right'):
-            self.velocity.x = 0
-        elif self.velocity.x < 0 and Collision.detect(self, actors, 'left'):
-            self.velocity.x = 0
-
-    def update_y(self, actors):
-        if self.velocity.y > 0 and Collision.detect(self, actors, 'bottom'):
-            self.velocity.y = 0
-        elif self.velocity.y < 0 and Collision.detect(self, actors, 'top'):
-            self.velocity.y = 0
 
     def respond(self, keys):
         self.keyboard_input(keys)
@@ -52,6 +40,9 @@ class Ramio(Marionette):
             self.velocity.x = 0
 
     def mouse_input(self):
-        distance = np.subtract(pg.mouse.get_pos(), self.position)
-        angle = math.degrees(math.pi + math.atan2(*distance))
-        self.rotate(angle)
+        current_cursor_position = pg.mouse.get_pos()
+        if current_cursor_position != self.last_cursor_position:
+            self.last_cursor_position = current_cursor_position
+            distance = np.subtract(current_cursor_position, self.position)
+            angle = math.degrees(math.pi + math.atan2(*distance))
+            self.rotate(angle)

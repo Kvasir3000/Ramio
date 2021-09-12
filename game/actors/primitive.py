@@ -2,6 +2,7 @@ import pygame as pg
 from pygame import Vector2
 from pygame.sprite import Sprite
 from abc import ABC, abstractmethod
+from game.physics.collision import Collision
 
 
 class Actor(Sprite, ABC):
@@ -38,6 +39,18 @@ class MovingActor(Actor, ABC):
 
     def move(self):
         super().move_image(self.velocity)
+
+    def update_x(self, actors):
+        if self.velocity.x > 0 and Collision.detect(self, actors, 'right'):
+            self.velocity.x = 0
+        elif self.velocity.x < 0 and Collision.detect(self, actors, 'left'):
+            self.velocity.x = 0
+
+    def update_y(self, actors):
+        if self.velocity.y > 0 and Collision.detect(self, actors, 'bottom'):
+            self.velocity.y = 0
+        elif self.velocity.y < 0 and Collision.detect(self, actors, 'top'):
+            self.velocity.y = 0
 
 
 class AnimatedActor(Actor, ABC):
