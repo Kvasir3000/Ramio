@@ -8,7 +8,7 @@ from game.physics.collision import Collision
 class Actor(Sprite, ABC):
     def __init__(self, x, y, image):
         super().__init__()
-        self.original_image = pg.image.load(image)
+        self.original_image = pg.image.load(image).convert_alpha()
         self.image = self.original_image
         self.rect = self.image.get_rect(center=(x, y))
 
